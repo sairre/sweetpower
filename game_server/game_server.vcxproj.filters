@@ -22,12 +22,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="NetIocp.cpp">
-      <Filter>源文件</Filter>
+      <Filter>net</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetIocp.h">
-      <Filter>头文件</Filter>
+      <Filter>net</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
