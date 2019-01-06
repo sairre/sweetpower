@@ -1,5 +1,7 @@
 
 #include "NetIocp.h"
+#include "SessionMgr.h"
+
 #include <stdio.h>
 
 
@@ -10,7 +12,7 @@
 //#pragma comment(lib, "odbc32.lib")
 //#pragma comment(lib, "odbccp32.lib")
 const int MAX_REC_DATA_SIZE = 256;
-
+class ClientSession;
 enum IOCP_DATA_ENUM
 {
 	IOCP_DATA_ACCEPT = 1,
@@ -30,9 +32,10 @@ struct iocp_data
 
 struct completion_key
 {
+	ClientSession * client_session;
 	SOCKET client_socket;
 	int port;
-
+	
 };
 
 class IocpImpl
@@ -52,6 +55,8 @@ public:
 NetIocp::NetIocp()
 {
 	InitSocket();
+
+	m_session_mgr = new SessionMgr();
 }
 
 
@@ -115,20 +120,33 @@ int NetIocp::DoIocpWork()
 	DWORD dw_trans = 0;
 	completion_key* complete_key;
 	iocp_data* pdata;
+	ClientSession* session = NULL;
 	while (true)
 	{
 		complete_key = NULL;
 		dw_trans = 0;
 		pdata = NULL;
 
+		m_session_mgr->ClearInvalidSession();
+
 		int ret = GetQueuedCompletionStatus(m_iocp, &dw_trans, (PULONG_PTR)&complete_key,
 			(LPOVERLAPPED*)&pdata, WSA_INFINITE);
+
+		
 		if (0 == ret)
 		{
-			int err = GetLastError();
-			printf("iocp error status :%d \n", err);
-			shutdown(pdata->accept_socket, 0);
-			closesocket(pdata->accept_socket);
+			if (NULL == complete_key)
+			{
+				continue;
+			}
+
+			session = complete_key->client_session;
+			if (NULL == session)
+			{
+				continue;
+			}
+
+			session->set_m_is_removed(true);
 			continue;
 		}
 
@@ -140,10 +158,19 @@ int NetIocp::DoIocpWork()
 		if (0 == dw_trans && pdata->data_type == IOCP_DATA_RECV)
 		{
 			// client close
-			int err = GetLastError();
-			printf("client close :%d \n", err);
-			shutdown(pdata->accept_socket, 0);
-			closesocket(pdata->accept_socket);
+			if (NULL == complete_key)
+			{
+				continue;
+			}
+
+			session = complete_key->client_session;
+			if (NULL == session)
+			{
+				continue;
+			}
+
+			session->set_m_is_removed(true);
+			
 			continue;
 		}
 		//printf("new event comes!\n");
@@ -175,6 +202,9 @@ int NetIocp::DoIocpWork()
 			completion_key * pkey = new completion_key();
 			pkey->client_socket = client_socket;
 			pkey->port = remote_sock_addr->sin_port;
+			pkey->client_session = new ClientSession(client_socket, pkey->port);
+
+			m_session_mgr->AddSessionToList(pkey->client_session);
 
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_socket), m_iocp, (ULONG_PTR)&pkey, 0);
 

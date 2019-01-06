@@ -114,11 +114,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetIocp.cpp" />
+    <ClCompile Include="SessionMgr.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ClientSession.h" />
     <ClInclude Include="NetIocp.h" />
+    <ClInclude Include="SessionMgr.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

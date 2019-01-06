@@ -6,7 +6,8 @@
 
 #define  gs_new new
 
-class IocpImpl;
+
+class SessionMgr;
 struct iocp_data;
 typedef int (*pFunc)(int, int);
 struct iocp_item
@@ -43,6 +44,8 @@ private:
 
 	HANDLE m_iocp;
 	SOCKET m_listen_socket;
+
+	SessionMgr * m_session_mgr;
 };
 
 #endif
