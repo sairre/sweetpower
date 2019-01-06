@@ -127,6 +127,7 @@ int NetIocp::DoIocpWork()
 		{
 			int err = GetLastError();
 			printf("iocp error status :%d \n", err);
+			shutdown(pdata->accept_socket, 0);
 			closesocket(pdata->accept_socket);
 			continue;
 		}
@@ -139,6 +140,10 @@ int NetIocp::DoIocpWork()
 		if (0 == dw_trans && pdata->data_type == IOCP_DATA_RECV)
 		{
 			// client close
+			int err = GetLastError();
+			printf("client close :%d \n", err);
+			shutdown(pdata->accept_socket, 0);
+			closesocket(pdata->accept_socket);
 			continue;
 		}
 		//printf("new event comes!\n");
@@ -152,17 +157,21 @@ int NetIocp::DoIocpWork()
 			struct sockaddr_in * local_sock_addr = NULL;
 			struct sockaddr_in * remote_sock_addr = NULL;
 			int local_len, remote_len = 0;
-			int len = sizeof(sockaddr_in);
 
+			// pdata->wsabuffer.len - 2 * addr_size 本地和远程地址放在数组最后位置，占据了2 * addr_size 大小
+			// 想要获得地址，第二个参数就不可以为0
 			GetAcceptExSockaddrs(pdata->wsabuffer.buf,
 				pdata->wsabuffer.len - 2 * addr_size,
 				addr_size, addr_size, (sockaddr**)&local_sock_addr, &local_len,
 				(sockaddr**)&remote_sock_addr, &remote_len);
-			/*GetAcceptExSockaddrs(pdata->wsabuffer.buf,
-				0,
-				addr_size, addr_size, (sockaddr**)&local_sock_addr, &local_len,
-				(sockaddr**)&remote_sock_addr, &remote_len);
-*/
+			//GetAcceptExSockaddrs(pdata->wsabuffer.buf,
+			//	0,
+			//	addr_size, addr_size, (sockaddr**)&local_sock_addr, &local_len,
+			//	(sockaddr**)&remote_sock_addr, &remote_len);
+
+			// 本次已经接收到的数据，要加上，否则接收数据会出错
+			pdata->recv_len += dw_trans;
+			
 			completion_key * pkey = new completion_key();
 			pkey->client_socket = client_socket;
 			pkey->port = remote_sock_addr->sin_port;
@@ -183,7 +192,7 @@ int NetIocp::DoIocpWork()
 			// 为本次接收的位置偏移，可能不是从0开始
 			// pdata->wsabuffer.buf[dw_trans] = 0;
 		
-			pdata->data[pdata->recv_len + dw_trans] = 0;
+			//pdata->data[pdata->recv_len + dw_trans] = 0;
 
 			// 分包
 			int len_size = 4;
@@ -285,11 +294,14 @@ int NetIocp::PostAcceptEvent()
 	int addr_size = sizeof(sockaddr_in) + 16;
 	pdata->accept_socket = client_socket;
 
-	//AcceptEx(m_listen_socket, client_socket, pdata->wsabuffer.buf, pdata->wsabuffer.len - addr_size * 2,
-	//	addr_size, addr_size, &dword, &pdata->overlapped);
-
-	AcceptEx(m_listen_socket, client_socket, pdata->wsabuffer.buf, 0,
+	int ret = AcceptEx(m_listen_socket, client_socket, pdata->wsabuffer.buf, pdata->wsabuffer.len - addr_size * 2,
 		addr_size, addr_size, &dword, &pdata->overlapped);
+
+	/*int ret = AcceptEx(m_listen_socket, client_socket, pdata->wsabuffer.buf, 0,
+		addr_size, addr_size, &dword, &pdata->overlapped);*/
+
+	int error = GetLastError();
+	printf("accept:ret = %d, err = %d\n", ret, error);
 
 	return 0;
 }
@@ -312,6 +324,8 @@ int NetIocp::PostRecvEvent(iocp_data * pdata)
 
 	int ret = WSARecv(pdata->accept_socket, &(pdata->wsabuffer),
 		1, &dword, &dwFlag, &(pdata->overlapped), NULL);
+	int error = GetLastError();
+	printf("recvieve:ret = %d, err = %d\n", ret, error);
 
 	return 0;
 }
