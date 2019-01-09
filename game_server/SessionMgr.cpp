@@ -19,6 +19,7 @@ bool SessionMgr::AddSessionToList(int socket, int port)
 bool SessionMgr::AddSessionToList(ClientSession* client_session)
 {
 	m_session_list.push_back(client_session);
+    printf("new comer \n");
 	return true;
 }
 
@@ -31,6 +32,7 @@ int SessionMgr::ClearInvalidSession()
 		if (NULL == client_session)
 		{
 			iter = m_session_list.erase(iter);
+            printf("invalid session\n");
 			continue;
 		}
 		
@@ -38,6 +40,7 @@ int SessionMgr::ClearInvalidSession()
 		if (client_session->get_m_is_removed())
 		{
 			iter = m_session_list.erase(iter);
+            printf("lost one session\n");
 			continue;
 		}
 

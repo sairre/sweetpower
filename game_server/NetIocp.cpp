@@ -206,7 +206,7 @@ int NetIocp::DoIocpWork()
 
 			m_session_mgr->AddSessionToList(pkey->client_session);
 
-			CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_socket), m_iocp, (ULONG_PTR)&pkey, 0);
+			CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_socket), m_iocp, (ULONG_PTR)pkey, 0);
 
 			PostAcceptEvent();
 			
@@ -331,7 +331,7 @@ int NetIocp::PostAcceptEvent()
 		addr_size, addr_size, &dword, &pdata->overlapped);*/
 
 	int error = GetLastError();
-	printf("accept:ret = %d, err = %d\n", ret, error);
+	//printf("accept:ret = %d, err = %d\n", ret, error);
 
 	return 0;
 }
@@ -355,7 +355,7 @@ int NetIocp::PostRecvEvent(iocp_data * pdata)
 	int ret = WSARecv(pdata->accept_socket, &(pdata->wsabuffer),
 		1, &dword, &dwFlag, &(pdata->overlapped), NULL);
 	int error = GetLastError();
-	printf("recvieve:ret = %d, err = %d\n", ret, error);
+	//printf("recvieve:ret = %d, err = %d\n", ret, error);
 
 	return 0;
 }
@@ -377,7 +377,7 @@ int NetIocp::CleanSocket()
 
 int NetIocp::PrintData(const char* data, int len)
 {
-	printf("recv:%s ,len = %d \n", data, len);
+	//printf("recv:%s ,len = %d \n", data, len);
 
 	return 0;
 }
