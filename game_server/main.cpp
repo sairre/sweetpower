@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "NetIocp.h"
+#include "SW_GameServer.h"
 int main(void)
 {
-	NetIocp* pIocp = new NetIocp();
-	pIocp->StartServer();
-
+    SW_GameServer * server = new SW_GameServer();
+    server->InitGameServer();
 	getchar();
+
     return 0;
 }

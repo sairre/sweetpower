@@ -1,14 +1,13 @@
 #ifndef _NET_IOCP_H
 #define _NET_IOCP_H
-#include <WinSock2.h>
-
-#include <windows.h>
+#include "PlatForm.h"
 
 #define  gs_new new
 
 
 class SessionMgr;
 struct iocp_data;
+class SW_Thread;
 typedef int (*pFunc)(int, int);
 struct iocp_item
 {
@@ -39,6 +38,8 @@ private:
 
 	int PrintData(const char* data, int len);
 
+
+    static void NetThread(void * args);
 private:
 	iocp_item m_iocp_cbs;
 
@@ -46,6 +47,7 @@ private:
 	SOCKET m_listen_socket;
 
 	SessionMgr * m_session_mgr;
+    SW_Thread * m_worker_thread;
 };
 
 #endif

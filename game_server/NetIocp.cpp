@@ -4,9 +4,8 @@
 
 #include <stdio.h>
 
-
-#include <mswsock.h>
-
+#include "SW_Thread.h"
+#include "ReceiveDataQueque.h"
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "Mswsock.lib")
 //#pragma comment(lib, "odbc32.lib")
@@ -35,6 +34,8 @@ struct completion_key
 	ClientSession * client_session;
 	SOCKET client_socket;
 	int port;
+
+    int player_id;
 	
 };
 
@@ -57,6 +58,7 @@ NetIocp::NetIocp()
 	InitSocket();
 
 	m_session_mgr = new SessionMgr();
+    m_worker_thread = new SW_Thread();
 }
 
 
@@ -110,7 +112,7 @@ int NetIocp::StartServer()
 
 	PostAcceptEvent();
 
-	DoIocpWork();
+    m_worker_thread->CreateSWThread(&NetIocp::NetThread, this);
     
     return 0;
 }
@@ -202,6 +204,9 @@ int NetIocp::DoIocpWork()
 			completion_key * pkey = new completion_key();
 			pkey->client_socket = client_socket;
 			pkey->port = remote_sock_addr->sin_port;
+            static int id = 0;
+            
+            pkey->player_id = id++;
 			pkey->client_session = new ClientSession(client_socket, pkey->port);
 
 			m_session_mgr->AddSessionToList(pkey->client_session);
@@ -281,6 +286,7 @@ int NetIocp::DoIocpWork()
 					// TODO 处理该包数据
 					char* pChar = pPackHead + len_size;
 					PrintData(pChar, pack_len);
+                    ReceiveDataQueque::ReceiveData(complete_key->player_id, pChar, pack_len);
 					
 					// 更新剩余数据长度
 					total_rec += len_size + pack_len;
@@ -380,4 +386,15 @@ int NetIocp::PrintData(const char* data, int len)
 	//printf("recv:%s ,len = %d \n", data, len);
 
 	return 0;
+}
+
+void NetIocp::NetThread(void * args)
+{
+    NetIocp* iocp = reinterpret_cast<NetIocp*>(args);
+    if (NULL == iocp)
+    {
+        return;
+    }
+
+    iocp->DoIocpWork();
 }
