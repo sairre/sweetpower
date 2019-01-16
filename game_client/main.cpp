@@ -47,11 +47,13 @@ int main(int argc, char** argv) {
         data.cmd_type = 1;
         data.sub_type = -i;
         data.ext_test = 1032;
+        ++i;
         data.para_int = i * i;
 
         int len = sizeof(TEST_DATA);
         send(s, (const char*)&len, 4, 0);
         send(s, (const char*)&data, len, 0);
+       Sleep(500);
     }
     system("pause");
 

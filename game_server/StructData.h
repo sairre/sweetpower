@@ -9,7 +9,7 @@ struct SERVER_BASE_DATA
     {}
 };
 
-struct TEST_DATA :public SERVER_BASE_DATA
+struct TEST_DATA :SERVER_BASE_DATA
 {
     int ext_test;
     int para_int;

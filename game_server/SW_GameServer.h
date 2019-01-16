@@ -1,9 +1,9 @@
 #ifndef _SW_GAMESERVER_H
 #define _SW_GAMESERVER_H
 
+#include "RoleMgr.h"
 class ReceiveDataQueque;
 class ProcessHandle;
-class RoleMgr;
 class NetIocp;
 class SW_GameServer
 {
@@ -15,14 +15,13 @@ public:
 
     int InitGameServer();
 
-private:
+public:
 
     ReceiveDataQueque* m_receive_data_queue;
     ProcessHandle * m_process_handle;
     NetIocp * m_net_io;
     RoleMgr * m_role_mgr;
-
-
 };
 
+extern SW_GameServer * g_sw_gameserver;
 #endif

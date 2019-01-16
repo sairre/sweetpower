@@ -1,11 +1,11 @@
 
 #include "NetIocp.h"
-#include "SessionMgr.h"
 
 #include <stdio.h>
 
 #include "SW_Thread.h"
 #include "ReceiveDataQueque.h"
+#include "SW_GameServer.h"
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "Mswsock.lib")
 //#pragma comment(lib, "odbc32.lib")
@@ -29,35 +29,15 @@ struct iocp_data
 	int read_len;
 };
 
-struct completion_key
-{
-	ClientSession * client_session;
-	SOCKET client_socket;
-	int port;
 
-    int player_id;
-	
-};
 
-class IocpImpl
-{
-public:
-	IocpImpl() :m_iocp(NULL), m_listen_socket(INVALID_SOCKET)
-	{}
 
-	~IocpImpl() {}
-
-	iocp_item m_iocp_cbs;
-
-	HANDLE m_iocp;
-	SOCKET m_listen_socket;
-};
 
 NetIocp::NetIocp()
 {
 	InitSocket();
 
-	m_session_mgr = new SessionMgr();
+
     m_worker_thread = new SW_Thread();
 }
 
@@ -122,65 +102,48 @@ int NetIocp::DoIocpWork()
 	DWORD dw_trans = 0;
 	completion_key* complete_key;
 	iocp_data* pdata;
-	ClientSession* session = NULL;
+	
 	while (true)
 	{
+        ClearInvalidSession();
+
 		complete_key = NULL;
 		dw_trans = 0;
 		pdata = NULL;
-
-		m_session_mgr->ClearInvalidSession();
-
 		int ret = GetQueuedCompletionStatus(m_iocp, &dw_trans, (PULONG_PTR)&complete_key,
 			(LPOVERLAPPED*)&pdata, WSA_INFINITE);
-
 		
-		if (0 == ret)
-		{
-			if (NULL == complete_key)
-			{
-				continue;
-			}
+        if (0 == ret)
+        {
+            if (NULL == complete_key)
+            {
+                continue;
+            }
+            complete_key->bConnect = false;
+            continue;
+        }
 
-			session = complete_key->client_session;
-			if (NULL == session)
-			{
-				continue;
-			}
+        if (NULL == pdata)
+        {
+            continue;
+        }
 
-			session->set_m_is_removed(true);
-			continue;
-		}
+        if (0 == dw_trans && pdata->data_type == IOCP_DATA_RECV)
+        {
+            // client close
+            if (NULL == complete_key)
+            {
+                continue;
+            }
 
-		if (NULL == pdata)
-		{
-			continue;
-		}
+            complete_key->bConnect = false;
+            continue;
+        }
 
-		if (0 == dw_trans && pdata->data_type == IOCP_DATA_RECV)
-		{
-			// client close
-			if (NULL == complete_key)
-			{
-				continue;
-			}
-
-			session = complete_key->client_session;
-			if (NULL == session)
-			{
-				continue;
-			}
-
-			session->set_m_is_removed(true);
-			
-			continue;
-		}
-		//printf("new event comes!\n");
-
-		switch (pdata->data_type)
-		{
-		case IOCP_DATA_ACCEPT:
-		{
+        switch (pdata->data_type)
+        {
+        case IOCP_DATA_ACCEPT:
+        {
 			SOCKET client_socket = pdata->accept_socket;
 			int addr_size = sizeof(sockaddr_in) + 16;
 			struct sockaddr_in * local_sock_addr = NULL;
@@ -201,24 +164,23 @@ int NetIocp::DoIocpWork()
 			// 本次已经接收到的数据，要加上，否则接收数据会出错
 			pdata->recv_len += dw_trans;
 			
+
+            static int id = 0;
+
 			completion_key * pkey = new completion_key();
 			pkey->client_socket = client_socket;
 			pkey->port = remote_sock_addr->sin_port;
-            static int id = 0;
             
             pkey->player_id = id++;
-			pkey->client_session = new ClientSession(client_socket, pkey->port);
-
-			m_session_mgr->AddSessionToList(pkey->client_session);
-
+            pkey->bConnect = true;
+            // strncpy(pkey->client_ip, remote_sock_addr->sin_addr);
+            g_sw_gameserver->m_role_mgr->AddRole(pkey->player_id);
+            g_sw_gameserver->m_role_mgr->SetOnline(pkey->player_id);
+            m_session.push_back(pkey);
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(client_socket), m_iocp, (ULONG_PTR)pkey, 0);
 
 			PostAcceptEvent();
-			
-			
 			PostRecvEvent(pdata);
-
-			
 		}
 		break;
 		case IOCP_DATA_RECV:
@@ -285,7 +247,7 @@ int NetIocp::DoIocpWork()
 					// 说明有一个完整的包
 					// TODO 处理该包数据
 					char* pChar = pPackHead + len_size;
-					PrintData(pChar, pack_len);
+					
                     ReceiveDataQueque::ReceiveData(complete_key->player_id, pChar, pack_len);
 					
 					// 更新剩余数据长度
@@ -386,6 +348,33 @@ int NetIocp::PrintData(const char* data, int len)
 	//printf("recv:%s ,len = %d \n", data, len);
 
 	return 0;
+}
+
+int NetIocp::ClearInvalidSession()
+{
+    ListSession::iterator iter = m_session.begin();
+    for (; iter != m_session.end();)
+    {
+        completion_key * key = *iter;
+        if (NULL == key)
+        {
+            continue;
+        }
+        if (!key->bConnect)
+        {
+            closesocket(key->client_socket);
+            g_sw_gameserver->m_role_mgr->SetOffline(key->player_id);
+            iter = m_session.erase(iter);
+            delete key;
+            key = NULL;
+        }
+        else
+        {
+            ++iter;
+        }
+    }
+
+    return 0;
 }
 
 void NetIocp::NetThread(void * args)

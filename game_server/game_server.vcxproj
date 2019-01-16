@@ -114,21 +114,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="CriticalLock.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetIocp.cpp" />
     <ClCompile Include="ProcessHandle.cpp" />
     <ClCompile Include="ReceiveDataQueque.cpp" />
     <ClCompile Include="RoleMgr.cpp" />
-    <ClCompile Include="SessionMgr.cpp" />
     <ClCompile Include="SW_GameServer.cpp" />
     <ClCompile Include="SW_Role.cpp" />
     <ClCompile Include="SW_Thread.cpp" />
     <ClCompile Include="TestModule.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ClientSession.h" />
     <ClInclude Include="CmdType.h" />
     <ClInclude Include="CriticalLock.h" />
     <ClInclude Include="IGameLogic.h" />
@@ -138,7 +135,6 @@
     <ClInclude Include="PublicHeader.h" />
     <ClInclude Include="ReceiveDataQueque.h" />
     <ClInclude Include="RoleMgr.h" />
-    <ClInclude Include="SessionMgr.h" />
     <ClInclude Include="StructData.h" />
     <ClInclude Include="SW_GameServer.h" />
     <ClInclude Include="SW_Role.h" />

@@ -5,8 +5,7 @@
 #include "ProcessHandle.h"
 #include "RoleMgr.h"
 
-#include "TestModule.h"
-
+SW_GameServer * g_sw_gameserver = NULL;
 SW_GameServer::SW_GameServer()
 {
 }
@@ -18,7 +17,6 @@ SW_GameServer::~SW_GameServer()
 
 int SW_GameServer::InitGameLogic()
 {
-    TestModule * test = new TestModule();
 
     return 0;
 }

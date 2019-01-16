@@ -2,8 +2,8 @@
 #define _PROCESS_HANDLE_H
 #include "PublicHeader.h"
 #include "CmdType.h"
-
-class SW_Role;
+#include "SW_GameServer.h"
+#include "SW_Role.h"
 class ProcessHandle
 {
 public:

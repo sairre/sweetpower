@@ -2,8 +2,8 @@
 #include "SW_GameServer.h"
 int main(void)
 {
-    SW_GameServer * server = new SW_GameServer();
-    server->InitGameServer();
+    g_sw_gameserver = new SW_GameServer();
+    g_sw_gameserver->InitGameServer();
 	getchar();
 
     return 0;

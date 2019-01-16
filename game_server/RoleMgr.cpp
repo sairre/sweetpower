@@ -6,7 +6,7 @@
 #include "ProcessHandle.h"
 RoleMgr::RoleMgr()
 {
-    
+    memset(m_role_arr, 0, sizeof(m_role_arr));
 }
 
 
@@ -27,6 +27,55 @@ int RoleMgr::StartRoleMgr()
     return 0;
 }
 
+int RoleMgr::AddRole(int player_id)
+{
+    // TODO  数据库中是否有记录，没有就添加
+
+    if (!IsValidPlayerId(player_id))
+    {
+        return 0;
+    }
+    SW_Role * role = new SW_Role();
+    role->set_player_id(player_id);
+    
+    m_role_arr[player_id] = role;
+
+}
+
+int RoleMgr::SetOnline(int player_id)
+{
+    if (!IsValidPlayerId(player_id))
+    {
+        return 0;
+    }
+   SW_Role * role = m_role_arr[player_id];
+    if (NULL == role)
+    {
+        return 0;
+    }
+
+    role->set_is_connected(true);
+    return 0;
+}
+
+int RoleMgr::SetOffline(int player_id)
+{
+    if (!IsValidPlayerId(player_id))
+    {
+        return 0;
+    }
+    SW_Role * role = m_role_arr[player_id];
+    if (NULL == role)
+    {
+        return 0;
+    }
+
+    role->set_is_connected(false);
+    return 0;
+
+
+}
+
 int RoleMgr::DoRoleWork()
 {
     while (true)
@@ -35,6 +84,11 @@ int RoleMgr::DoRoleWork()
 
         HandleDispatchMsg();
     }
+}
+
+int RoleMgr::HandleLostClient()
+{
+    return 0;
 }
 
 int RoleMgr::HandleClientMsg()
@@ -63,8 +117,13 @@ int RoleMgr::HandleClientMsg()
     {
         return 0;
     }
+    if (role->get_is_connected())
+    {
+        ProcessHandle::StaticTriggerProcessHandle(role, data, msg_len);
+    }
 
-    ProcessHandle::StaticTriggerProcessHandle(role, data, msg_len);
+    free(data);
+    data = NULL;
 
     return 0;
     
@@ -79,6 +138,11 @@ int RoleMgr::HandleDispatchMsg()
 int RoleMgr::HandleExecute()
 {
     return 0;
+}
+
+bool RoleMgr::IsValidPlayerId(int player_id)
+{
+    return (player_id >= 0) && (player_id < MAX_ROLE_NUMS);
 }
 
 void RoleMgr::RoleThread(void * args)

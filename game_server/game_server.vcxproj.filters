@@ -27,12 +27,6 @@
     <ClCompile Include="NetIocp.cpp">
       <Filter>net</Filter>
     </ClCompile>
-    <ClCompile Include="ClientSession.cpp">
-      <Filter>net</Filter>
-    </ClCompile>
-    <ClCompile Include="SessionMgr.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="SW_Thread.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -61,12 +55,6 @@
   <ItemGroup>
     <ClInclude Include="NetIocp.h">
       <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientSession.h">
-      <Filter>net</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionMgr.h">
-      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="SW_Thread.h">
       <Filter>头文件</Filter>

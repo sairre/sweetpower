@@ -20,6 +20,7 @@ int TestModule::Update()
 
 int TestModule::TestClientMsg(SW_Role * role, SERVER_BASE_DATA * data)
 {
-    printf("hello world\n");
+    TEST_DATA * test_data =reinterpret_cast<TEST_DATA*>(data);
+    printf("hello world : %d, %d\n", role->get_player_id(), test_data->para_int);
     return 0;
 }
