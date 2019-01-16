@@ -50,10 +50,14 @@ int main(int argc, char** argv) {
         ++i;
         data.para_int = i * i;
 
+        if (i > 100000)
+        {
+            break;
+        }
+
         int len = sizeof(TEST_DATA);
         send(s, (const char*)&len, 4, 0);
         send(s, (const char*)&data, len, 0);
-       Sleep(500);
     }
     system("pause");
 

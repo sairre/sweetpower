@@ -134,7 +134,9 @@
     <ClInclude Include="ProcessHandle.h" />
     <ClInclude Include="PublicHeader.h" />
     <ClInclude Include="ReceiveDataQueque.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RoleMgr.h" />
+    <ClInclude Include="RW_Queue.h" />
     <ClInclude Include="StructData.h" />
     <ClInclude Include="SW_GameServer.h" />
     <ClInclude Include="SW_Role.h" />

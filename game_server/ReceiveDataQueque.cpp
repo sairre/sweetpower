@@ -41,20 +41,21 @@ bool ReceiveDataQueque::ReceiveData(int player_id, const char* data, int len)
     data_item.player_id = player_id;
     data_item.msg_data = copy_data;
     data_item.msg_len = len;
-    
-    {
-        CriticalLock clock(single_queue->m_rec_data_cs); 
-        single_queue->m_data_deque.push_back(data_item);
-    }
 
+    /*  {
+          CriticalLock clock(single_queue->m_rec_data_cs);
+          single_queue->m_data_deque.push_back(data_item);
+      }*/
+
+    single_queue->rw_queue.AddToQueue(data_item);
     return true;
    
 }
 
 SERVER_BASE_DATA * ReceiveDataQueque::FetchFrontData(int & player_id, int & len)
 {
-    {
-        CriticalLock clock(single_queue->m_rec_data_cs); 
+   /* {
+        CriticalLock clock(single_queue->m_rec_data_cs);
         if (!single_queue->m_data_deque.empty())
         {
             DataQueue data = single_queue->m_data_deque.front();
@@ -65,5 +66,18 @@ SERVER_BASE_DATA * ReceiveDataQueque::FetchFrontData(int & player_id, int & len)
         }
 
         return NULL;
-    }
+    }*/
+      {
+          DataQueue data;
+          if (single_queue->rw_queue.FetchData(data))
+          {
+              player_id = data.player_id;
+              len = data.msg_len;
+              return data.msg_data;
+          }
+          else
+          {
+              return NULL;
+          }
+      }
 }

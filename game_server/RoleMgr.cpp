@@ -90,17 +90,27 @@ int RoleMgr::HandleLostClient()
 {
     return 0;
 }
-
+int startEx = 0;
 int RoleMgr::HandleClientMsg()
 {
     int player_id = 0;
     int msg_len = 0;
+
     SERVER_BASE_DATA * data = ReceiveDataQueque::FetchFrontData(player_id, msg_len);
     if (NULL == data)
     {
+        if (startEx > 0)
+        {
+            int end = GetTickCount64();
+            printf("time: %d \n", end - startEx);
+            startEx = 0;
+        }
+       
         return 0;
     }
 
+    static int start = GetTickCount64();
+    startEx = start;
     int role_len = sizeof(m_role_arr) / sizeof(SW_Role*);
     if (player_id < 0)
     {
@@ -117,11 +127,8 @@ int RoleMgr::HandleClientMsg()
     {
         return 0;
     }
-    if (role->get_is_connected())
-    {
-        ProcessHandle::StaticTriggerProcessHandle(role, data, msg_len);
-    }
-
+  
+    ProcessHandle::StaticTriggerProcessHandle(role, data, msg_len);
     free(data);
     data = NULL;
 
