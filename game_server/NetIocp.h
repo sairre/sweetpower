@@ -7,10 +7,25 @@
 #include <list>
 struct iocp_data;
 class SW_Thread;
-typedef int (*pFunc)(int, int);
+typedef int (* CLIENT_CONNECT_CB)(int player_id, int port, const char * ip);
+typedef int (* CLIENT_DATA_COME_CB)(int, int);
+typedef int (*CLIENT_LOST_CONNECT_CB)(int, int);
 struct iocp_item
 {
-    pFunc func;
+    CLIENT_CONNECT_CB connect_cb;
+    CLIENT_DATA_COME_CB data_cb;
+    CLIENT_LOST_CONNECT_CB lost_con_cb;
+
+    iocp_item():connect_cb(NULL), data_cb(NULL), lost_con_cb(NULL)
+    {}
+
+    iocp_item & operator = (const iocp_item & rhs)
+    {
+        connect_cb = rhs.connect_cb;
+        data_cb = rhs.data_cb;
+        lost_con_cb = rhs.lost_con_cb;
+        return *this;
+    }
 };
 
 struct completion_key

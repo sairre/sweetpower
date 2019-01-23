@@ -30,9 +30,6 @@
     <ClCompile Include="SW_Thread.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="ReceiveDataQueque.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="CriticalLock.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -57,9 +54,6 @@
       <Filter>net</Filter>
     </ClInclude>
     <ClInclude Include="SW_Thread.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ReceiveDataQueque.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="StructData.h">
@@ -93,9 +87,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TestModule.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="RW_Queue.h">

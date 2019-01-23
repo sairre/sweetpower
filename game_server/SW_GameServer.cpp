@@ -1,6 +1,5 @@
 #include "SW_GameServer.h"
 
-#include "ReceiveDataQueque.h"
 #include "NetIocp.h"
 #include "ProcessHandle.h"
 #include "RoleMgr.h"
@@ -23,12 +22,6 @@ int SW_GameServer::InitGameLogic()
 
 int SW_GameServer::InitGameServer()
 {
-    m_receive_data_queue = new ReceiveDataQueque();
-    if (NULL == m_receive_data_queue)
-    {
-        return 0;
-    }
-
     m_process_handle = new ProcessHandle();
     if (NULL == m_process_handle)
     {
@@ -50,6 +43,9 @@ int SW_GameServer::InitGameServer()
     InitGameLogic();
 
     m_role_mgr->StartRoleMgr();
+    iocp_item cb_item;
+
+    m_net_io->set_callback(cb_item);
     m_net_io->StartServer();
 
     return 0;

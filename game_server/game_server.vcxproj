@@ -118,7 +118,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NetIocp.cpp" />
     <ClCompile Include="ProcessHandle.cpp" />
-    <ClCompile Include="ReceiveDataQueque.cpp" />
     <ClCompile Include="RoleMgr.cpp" />
     <ClCompile Include="SW_GameServer.cpp" />
     <ClCompile Include="SW_Role.cpp" />
@@ -133,8 +132,6 @@
     <ClInclude Include="PlatForm.h" />
     <ClInclude Include="ProcessHandle.h" />
     <ClInclude Include="PublicHeader.h" />
-    <ClInclude Include="ReceiveDataQueque.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="RoleMgr.h" />
     <ClInclude Include="RW_Queue.h" />
     <ClInclude Include="StructData.h" />

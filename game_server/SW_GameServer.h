@@ -17,7 +17,6 @@ public:
 
 public:
 
-    ReceiveDataQueque* m_receive_data_queue;
     ProcessHandle * m_process_handle;
     NetIocp * m_net_io;
     RoleMgr * m_role_mgr;

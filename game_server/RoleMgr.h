@@ -1,8 +1,20 @@
 #ifndef _ROLE_MGR_H
 #define _ROLE_MGR_H
+#include "PlatForm.h"
+#include "RW_Queue.h"
+#include "StructData.h"
 class SW_Role;
 class SW_Thread;
 const int MAX_ROLE_NUMS = 65536;
+
+struct DataQueue
+{
+    int player_id;
+    int msg_len;
+    SERVER_BASE_DATA* msg_data;
+    DataQueue() :player_id(0), msg_len(0), msg_data(NULL) {}
+};
+
 class RoleMgr
 {
 public:
@@ -16,6 +28,8 @@ public:
     int SetOnline(int player_id);
 
     int SetOffline(int player_id);
+
+    int AddRecData(int player_id, const char* data, int len);
  
 private:
  
@@ -39,6 +53,7 @@ private:
     SW_Role * m_role_arr[MAX_ROLE_NUMS];
     SW_Thread * m_worker_thread;
 
+    RW_Queue<DataQueue> * rec_data_queue;
 };
 
 #endif

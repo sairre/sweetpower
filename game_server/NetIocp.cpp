@@ -4,14 +4,12 @@
 #include <stdio.h>
 
 #include "SW_Thread.h"
-#include "ReceiveDataQueque.h"
 #include "SW_GameServer.h"
 #pragma comment(lib, "ws2_32.lib")
 #pragma comment(lib, "Mswsock.lib")
 //#pragma comment(lib, "odbc32.lib")
 //#pragma comment(lib, "odbccp32.lib")
 const int MAX_REC_DATA_SIZE = 256;
-class ClientSession;
 enum IOCP_DATA_ENUM
 {
 	IOCP_DATA_ACCEPT = 1,
@@ -167,13 +165,18 @@ int NetIocp::DoIocpWork()
 
             static int id = 0;
 
-			completion_key * pkey = new completion_key();
-			pkey->client_socket = client_socket;
-			pkey->port = remote_sock_addr->sin_port;
-            
+            completion_key * pkey = new completion_key();
+            pkey->client_socket = client_socket;
+            pkey->port = remote_sock_addr->sin_port;
             pkey->player_id = id++;
             pkey->bConnect = true;
-            // strncpy(pkey->client_ip, remote_sock_addr->sin_addr);
+            char * ip = inet_ntoa(remote_sock_addr->sin_addr);
+
+            strncpy(pkey->client_ip, ip, strlen(ip));
+            pkey->client_ip[strlen(ip)] = '\0';
+
+            m_iocp_cbs.connect_cb(pkey->player_id, pkey->port, pkey->client_ip);
+
             g_sw_gameserver->m_role_mgr->AddRole(pkey->player_id);
             g_sw_gameserver->m_role_mgr->SetOnline(pkey->player_id);
             m_session.push_back(pkey);
@@ -248,7 +251,7 @@ int NetIocp::DoIocpWork()
 					// TODO 处理该包数据
 					char* pChar = pPackHead + len_size;
 					
-                    ReceiveDataQueque::ReceiveData(complete_key->player_id, pChar, pack_len);
+                    g_sw_gameserver->m_role_mgr->AddRecData(complete_key->player_id, pChar, pack_len);
 					
 					// 更新剩余数据长度
 					total_rec += len_size + pack_len;
@@ -258,9 +261,6 @@ int NetIocp::DoIocpWork()
 
 			} while (left_data > 0);
 
-			
-		
-		
 			PostRecvEvent(pdata);
 		}
 		break;
