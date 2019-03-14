@@ -29,6 +29,8 @@ private:
 
     int recv_data();
 
+	int remove_dead_connect();
+
 private:
     sw_sock m_sock;
     FD_SET m_read_set;

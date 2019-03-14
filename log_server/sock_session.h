@@ -20,6 +20,10 @@ public:
 
     int prototype_recv(sock_session* sock_ss);
 
+	bool is_connected() { return m_bConnected; }
+
+	void set_connect() { m_bConnected = true; }
+	void set_close() { m_bConnected = false; }
 private:
 
     sw_sock m_sock;
@@ -29,6 +33,8 @@ private:
 
     int m_data_recved;
     int m_data_recv_handled;
+
+	bool m_bConnected;
 
 };
 

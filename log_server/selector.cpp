@@ -87,6 +87,7 @@ bool selector::start()
 {
     while (1)
     {
+		remove_dead_connect();
         fill_fd_set();
         int ret = select(m_sock + 1, &m_read_set, &m_write_set, NULL, NULL);
         if (sw_error_sock == ret)
@@ -121,6 +122,10 @@ int selector::fill_fd_set()
         {
             continue;
         }
+		if (!psock->is_connected())
+		{
+			continue;
+		}
         FD_SET(psock->get_sock(), &m_read_set);
         FD_SET(psock->get_sock(), &m_write_set);
     }
@@ -144,6 +149,7 @@ int selector::accept_new_commer()
         printf("err accept :%d \n ", err);
     }
     sock_session* psock = new sock_session();
+	psock->set_connect();
     psock->set_sock(client_sock);
     psock->sock_accept();
     m_sock_vec.push_back(psock);
@@ -153,7 +159,7 @@ int selector::accept_new_commer()
 
 int selector::recv_data()
 {
-    size_t len = m_sock_vec.size();
+   size_t len = m_sock_vec.size();
    for (size_t index = 0; index < len; ++ index)
    {
        sock_session* psock = m_sock_vec[index];
@@ -161,6 +167,10 @@ int selector::recv_data()
        {
            continue;
        }
+	   if (!psock->is_connected())
+	   {
+		   continue;
+	   }
        if (!FD_ISSET(psock->get_sock(), &m_read_set))
        {
            continue;
@@ -171,4 +181,32 @@ int selector::recv_data()
 
    return 0;
     
+}
+
+int selector::remove_dead_connect()
+{
+	std::vector<sock_session*>::iterator  iter = m_sock_vec.begin();
+	for (; iter != m_sock_vec.end();)
+	{
+		sock_session* psock = *iter;
+		if (NULL == psock)
+		{
+			++iter;
+			continue;
+		}
+		if (psock->is_connected())
+		{
+			++iter;
+			continue;
+		}
+		
+		iter = m_sock_vec.erase(iter);
+		
+		shutdown(psock->get_sock(), SD_BOTH);
+		delete psock;
+		psock = NULL;
+	}
+
+	return 0;
+	return 0;
 }
