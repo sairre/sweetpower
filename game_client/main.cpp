@@ -49,6 +49,7 @@ int main(int argc, char** argv) {
         data.ext_test = 1032;
         ++i;
         data.para_int = i * i;
+        memcpy(data.stra, "hello world", 12);
 
        /* if (i > 100000)
         {

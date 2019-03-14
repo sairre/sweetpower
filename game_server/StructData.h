@@ -13,6 +13,7 @@ struct TEST_DATA :SERVER_BASE_DATA
 {
     int ext_test;
     int para_int;
-    TEST_DATA() :ext_test(0), para_int(0) {}
+    char stra[64];
+    TEST_DATA() :ext_test(0), para_int(0),stra("") {}
 };
 #endif
