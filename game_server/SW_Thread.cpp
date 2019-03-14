@@ -38,7 +38,7 @@ bool SW_Thread::CreateSWThread(THREAD_FUNC thread_func, void* args)
     // 所有创建线程应该都在同一个线程中，否则意义不大
 
     // 自动复位，初始未激发
-    m_event = CreateEvent(NULL, FALSE, FALSE, "");
+    m_event = CreateEvent(NULL, FALSE, FALSE, L"");
     
     if (NULL == m_event)
     {

@@ -40,6 +40,7 @@ int RoleMgr::AddRole(int player_id)
     
     m_role_arr[player_id] = role;
 
+	return 0;
 }
 
 int RoleMgr::SetOnline(int player_id)

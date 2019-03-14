@@ -34,7 +34,6 @@ int main(int argc, char** argv) {
         printf("connect error\n");
         closesocket(s);
         system("pause");
-        goto out;
         return -1;
     }
 
@@ -63,7 +62,7 @@ int main(int argc, char** argv) {
     system("pause");
 
     closesocket(s);
-out:
+
 #ifdef WIN32
     WSACleanup();
 #endif
