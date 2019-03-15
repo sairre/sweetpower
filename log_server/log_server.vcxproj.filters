@@ -24,6 +24,24 @@
     <ClCompile Include="sock_session.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="buffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BufferHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\game_server\SW_Thread.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="INetMgr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LogNetMgr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNetSession.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="selector.h">
@@ -39,6 +57,24 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\game_server\StructData.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="buffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferHandler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\game_server\SW_Thread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="INetMgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LogNetMgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TestNetSession.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

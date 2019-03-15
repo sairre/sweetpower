@@ -110,16 +110,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\game_server\SW_Thread.cpp" />
+    <ClCompile Include="buffer.cpp" />
+    <ClCompile Include="BufferHandler.cpp" />
+    <ClCompile Include="INetMgr.cpp" />
+    <ClCompile Include="LogNetMgr.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="selector.cpp" />
     <ClCompile Include="sock_session.cpp" />
+    <ClCompile Include="TestNetSession.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\game_server\PlatForm.h" />
     <ClInclude Include="..\game_server\StructData.h" />
+    <ClInclude Include="..\game_server\SW_Thread.h" />
+    <ClInclude Include="buffer.h" />
+    <ClInclude Include="BufferHandler.h" />
+    <ClInclude Include="INetMgr.h" />
+    <ClInclude Include="LogNetMgr.h" />
     <ClInclude Include="selector.h" />
     <ClInclude Include="sock_session.h" />
     <ClInclude Include="sw_net.h" />
+    <ClInclude Include="TestNetSession.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

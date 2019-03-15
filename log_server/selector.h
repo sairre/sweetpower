@@ -3,6 +3,7 @@
 #include "..\game_server\PlatForm.h"
 #include <vector>
 #include "sw_net.h"
+class BufferHandler;
 class sock_session;
 class selector
 {
@@ -12,6 +13,8 @@ public:
 
 public:
     int init_evironment(const sw_net_cb& cb);
+
+    void SetBufferHandler(BufferHandler* pBufferHandler) { m_pBufferHandler = pBufferHandler; }
    
     int set_opt(sw_sock socket);
     bool start_listen();
@@ -39,6 +42,7 @@ private:
     std::vector<sock_session*> m_sock_vec;
 
     sw_net_cb m_cb;
+    BufferHandler* m_pBufferHandler;
 };
 
 #endif // !SELECTOR_H

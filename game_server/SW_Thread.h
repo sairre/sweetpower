@@ -18,7 +18,7 @@ public:
     bool RunWork();
 
 private:
-    HANDLE m_event;
+ 
     HANDLE m_thread_handle;
     THREAD_FUNC m_thread_func;
     bool m_status;

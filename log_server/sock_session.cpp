@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include "..\game_server\StructData.h"
+#include "buffer.h"
 
 sock_session::sock_session():m_data_recved(0),m_data_recv_handled(0),m_bConnected(false)
 {
@@ -17,7 +18,7 @@ int sock_session::sock_accept()
     return 0;
 }
 
-int sock_session::sock_recv()
+int sock_session::sock_recv(BufferHandler* pBufferHandler)
 {
     int ret = 0;
     int recved = 0;
@@ -25,7 +26,7 @@ int sock_session::sock_recv()
 	if (m_data_recved >= MAX_LEN)
 	{
 		printf("rec buff is full\n");
-		prototype_recv(this);
+		prototype_recv(this, pBufferHandler);
 		return 0;
 	}
 	ret = recv(m_sock, m_recv_buf + m_data_recved, MAX_LEN - m_data_recved, 0);
@@ -45,7 +46,7 @@ int sock_session::sock_recv()
 	m_data_recved += ret;
 
 	// 数据解析层次解析
-    prototype_recv(this);
+    prototype_recv(this, pBufferHandler);
 
     return 0;
 }
@@ -55,13 +56,16 @@ int sock_session::sock_send()
     return 0;
 }
 
-int sock_session::prototype_recv(sock_session* sock_ss)
+int sock_session::prototype_recv(sock_session* sock_ss, BufferHandler* pBufferHandler)
 {
     if (NULL == sock_ss)
     {
         return 0;
     }
-
+    if (NULL == pBufferHandler)
+    {
+        return 0;
+    }
 	while (1)
 	{
 		// 读取包头，不足一个包头，放弃
@@ -84,10 +88,12 @@ int sock_session::prototype_recv(sock_session* sock_ss)
 		{
 			return 0;
 		}
-		memmove(msg, sock_ss->m_recv_buf + 4, len);
-		TEST_DATA * pdata = (TEST_DATA*)msg;
-		printf("get msg:%s\n", pdata->stra);
-		fflush(stdout);
+        buffer * pBuff = new buffer(sock_ss->m_recv_buf + 4, len);
+        pBufferHandler->SendBuffer(pBuff);
+        /*memmove(msg, sock_ss->m_recv_buf + 4, len);
+        TEST_DATA * pdata = (TEST_DATA*)msg;
+        printf("get msg:%s\n", pdata->stra);
+        fflush(stdout);*/
 
 		memmove(sock_ss->m_recv_buf, sock_ss->m_recv_buf + len + 4, len + 4);
 		sock_ss->m_data_recved -= ( 4 + len);

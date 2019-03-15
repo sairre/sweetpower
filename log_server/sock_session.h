@@ -2,6 +2,7 @@
 #define  SOCK_SESSION_H
 
 #include "..\game_server\PlatForm.h"
+#include "BufferHandler.h"
 #define  MAX_LEN 2048
 class sock_session
 {
@@ -14,16 +15,17 @@ public:
 
     int sock_accept();
 
-    int sock_recv();
+    int sock_recv(BufferHandler* pBufferHandler);
 
     int sock_send();
 
-    int prototype_recv(sock_session* sock_ss);
+    int prototype_recv(sock_session* sock_ss, BufferHandler* pBufferHandler);
 
 	bool is_connected() { return m_bConnected; }
 
 	void set_connect() { m_bConnected = true; }
 	void set_close() { m_bConnected = false; }
+
 private:
 
     sw_sock m_sock;

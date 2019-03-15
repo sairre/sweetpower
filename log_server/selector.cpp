@@ -176,7 +176,7 @@ int selector::recv_data()
            continue;
        }
 
-       psock->sock_recv();
+       psock->sock_recv(m_pBufferHandler);
    }
 
    return 0;
