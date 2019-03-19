@@ -14,7 +14,7 @@ public:
 public:
     int init_evironment(const sw_net_cb& cb);
 
-    void SetBufferHandler(BufferHandler* pBufferHandler) { m_pBufferHandler = pBufferHandler; }
+    void SetBufferHandler(BufferHandler* pBufferHandler);
    
     int set_opt(sw_sock socket);
     bool start_listen();

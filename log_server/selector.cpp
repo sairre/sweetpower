@@ -22,7 +22,13 @@ int selector::init_evironment(const sw_net_cb& cb)
     return 0;
 }
 
-int selector::set_opt( sw_sock socket )
+void selector::SetBufferHandler(BufferHandler* pBufferHandler)
+{
+    m_pBufferHandler = pBufferHandler;
+    m_pBufferHandler->StartBufferHandleThread();
+}
+
+int selector::set_opt(sw_sock socket)
 {
     int op = 0;
     int len = sizeof(op);

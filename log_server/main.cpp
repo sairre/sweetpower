@@ -1,8 +1,7 @@
 #include "selector.h"
+#include "LogNetMgr.h"
 int main(void)
 {
-    selector my_selector;
-    my_selector.start_listen();
-    my_selector.start();
+    LogNetMgr::Instance()->CreateListener(0, 0);
     return 0;
 }

@@ -18,7 +18,7 @@ buffer::buffer(const char* pMsg, int len)
     {
         return;
     }
-    m_pHead = (char*)calloc(1, sizeof(len));
+    m_pHead = (char*)calloc(1, sizeof(char) * len);
     if (NULL == m_pHead)
     {
         return;

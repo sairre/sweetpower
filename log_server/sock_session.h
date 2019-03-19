@@ -3,7 +3,7 @@
 
 #include "..\game_server\PlatForm.h"
 #include "BufferHandler.h"
-#define  MAX_LEN 2048
+#define  MAX_LEN 8192
 class sock_session
 {
 public:

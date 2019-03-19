@@ -48,12 +48,8 @@ int main(int argc, char** argv) {
         data.ext_test = 1032;
         ++i;
         data.para_int = i * i;
-        memcpy(data.stra, "hello world", 12);
-
-       /* if (i > 100000)
-        {
-            break;
-        }*/
+       
+        sprintf(data.stra, "processid : %d, hello word index = %i \n", (int)GetCurrentProcessId(), i);
 
         int len = sizeof(TEST_DATA);
         send(s, (const char*)&len, 4, 0);
